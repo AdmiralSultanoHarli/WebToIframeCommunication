@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="en-US">
+
+<body>
+  <p style="font-size:20pt;">This Is Parent View</p>
+  <br><br>
+  <input onClick="postMessageToChild(sendData)" style="height:50px;width:300px;font-size:20pt;" type="button"
+    value="Send Data To Child" />
+  <input onClick="requestMessageFromChild()" style="height:50px;width:300px;font-size:20pt;" type="button"
+    value="Get Data From Child" />
+  <br><br>
+  <p style="font-size:20pt;">Data From Child</p>
+  <p id="p1">Empty</p>
+  <br><br>
+  <iframe id="testFrame" src="child-web.html" height="500" width="800"
+    title="Iframe Example"></iframe>
+
+  <script type="text/javascript">
+
+    let requestData = {
+      "fnName": "requestData"
+    }
+
+    let sendData = {
+      "fnName": "sendData",
+      "data": {
+        "id": "asda81212jkasdk12",
+        "name": "Admiral",
+        "job": "FullSnack Developer",
+        "balance": "Rp. -1",
+        "source": "Parent"
+      }
+    }
+
+    let updatedData = {
+      "fnName": "sendData",
+      "data": {
+        "updated": "Data Parent"
+      }
+    }
+
+    window.addEventListener('message', function (event) {
+      console.log("Received message from child: ", event.data);
+      let data = JSON.parse(event.data);
+      switch (data.fnName) {
+        case "requestData":
+          postMessageToChild(updatedData);
+          break;
+        case "sendData":
+          const pelement = document.getElementById("p1");
+          pelement.innerHTML = JSON.stringify(data.data);
+          break;
+      }
+    });
+
+    function postMessageToChild(data) {
+      const iframeElement = document.getElementById("testFrame");
+      iframeElement.contentWindow.postMessage(JSON.stringify(data), "*");
+    }
+
+    function requestMessageFromChild() {
+      const iframeElement = document.getElementById("testFrame");
+      iframeElement.contentWindow.postMessage(JSON.stringify(requestData), "*");
+    }
+
+  </script>
+  <style>
+    body {
+      background-color: #93B874
+    }
+  </style>
+</body>
+
+</html>
